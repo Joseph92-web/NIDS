@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Performance | NIDS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid #00ff88;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, #00ff88, #00ccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #00ccff;
+            text-decoration: none;
+        }
+
+        .card {
+            background: rgba(30, 35, 60, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #333;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #00ff88;
+            border-left: 4px solid #00ff88;
+            padding-left: 15px;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .chart-item {
+            text-align: center;
+        }
+
+        .chart-item img {
+            max-width: 100%;
+            border-radius: 10px;
+            border: 1px solid #444;
+            background: white;
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        th {
+            background: #00ff88;
+            color: #0a0e27;
+        }
+
+        .badge-high {
+            background: #00ff88;
+            color: #0a0e27;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            border-top: 1px solid #333;
+            margin-top: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Model Performance Results</h1>
+            <a href="/" class="back-link">← Back to Dashboard</a>
+        </header>
+
+        <div class="card">
+            <h2>📈 Comparative Metrics</h2>
+            <div class="chart-item">
+                <img src="/static/comparison_chart.png" alt="Model Comparison Chart">
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📉 Confusion Matrices</h2>
+            <div class="chart-grid">
+                <div class="chart-item">
+                    <h3>Random Forest</h3>
+                    <img src="/static/cm_random_forest.png" alt="Random Forest Confusion Matrix">
+                </div>
+                <div class="chart-item">
+                    <h3>Decision Tree</h3>
+                    <img src="/static/cm_decision_tree.png" alt="Decision Tree Confusion Matrix">
+                </div>
+                <div class="chart-item">
+                    <h3>K-Nearest Neighbors</h3>
+                    <img src="/static/cm_k_nearest_neighbors.png" alt="KNN Confusion Matrix">
+                </div>
+                <div class="chart-item">
+                    <h3>Logistic Regression</h3>
+                    <img src="/static/cm_logistic_regression.png" alt="Logistic Regression Confusion Matrix">
+                </div>
+                <div class="chart-item">
+                    <h3>Naive Bayes</h3>
+                    <img src="/static/cm_naive_bayes.png" alt="Naive Bayes Confusion Matrix">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🏆 Best Model: Random Forest</h2>
+            <table>
+                <tr><th>Metric</th><th>Value</th></tr>
+                <tr><td>Accuracy</td><td><span class="badge-high">99.2%</span></td></tr>
+                <tr><td>Precision</td><td>99.1%</td></tr>
+                <tr><td>Recall</td><td>99.3%</td></tr>
+                <tr><td>F1-Score</td><td>99.2%</td></tr>
+            </table>
+            <p>✅ The Random Forest classifier significantly outperforms other algorithms due to its ensemble nature, robustness against overfitting, and ability to handle the high-dimensional, non-linear NSL-KDD feature space.</p>
+        </div>
+    </div>
+    <footer>
+        <p>© 2025 Omojah Joseph Irueru-Oghene | Department of Computing | Glorious Vision University</p>
+    </footer>
+</body>
+</html>

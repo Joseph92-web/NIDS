@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Detection | NIDS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid #00ff88;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, #00ff88, #00ccff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #00ccff;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .card {
+            background: rgba(30, 35, 60, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #00ff88;
+            border-left: 4px solid #00ff88;
+            padding-left: 15px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            color: #aaa;
+        }
+
+        input, select {
+            background: #1e1e2e;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        button {
+            background: linear-gradient(90deg, #00ff88, #00ccff);
+            color: #0a0e27;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+        }
+
+        .result-card {
+            background: #0a0e27;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 5px solid #00ff88;
+        }
+
+        .result-normal {
+            border-left-color: #00ff88;
+        }
+        .result-dos {
+            border-left-color: #ff4444;
+        }
+        .result-probe {
+            border-left-color: #ffaa44;
+        }
+        .result-r2l, .result-u2r {
+            border-left-color: #ff0066;
+        }
+
+        .prob-bar {
+            background: #2a2a3e;
+            border-radius: 10px;
+            height: 20px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+        .prob-fill {
+            height: 100%;
+            background: #00ff88;
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            font-size: 0.7rem;
+            color: black;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            border-top: 1px solid #333;
+            margin-top: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Manual Traffic Analysis</h1>
+            <a href="/" class="back-link">← Back to Dashboard</a>
+        </header>
+
+        <div class="card">
+            <h2>Enter Network Connection Features</h2>
+            <form id="detectForm">
+                <div class="form-grid">
+                    <!-- Basic features -->
+                    <div class="form-group">
+                        <label>duration (seconds)</label>
+                        <input type="number" step="0.01" name="duration" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>protocol_type</label>
+                        <select name="protocol_type">
+                            <option value="tcp">tcp</option>
+                            <option value="udp">udp</option>
+                            <option value="icmp">icmp</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>service</label>
+                        <select name="service">
+                            <option value="http">http</option>
+                            <option value="ftp">ftp</option>
+                            <option value="smtp">smtp</option>
+                            <option value="ssh">ssh</option>
+                            <option value="dns">dns</option>
+                            <option value="other">other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>flag</label>
+                        <select name="flag">
+                            <option value="SF">SF</option>
+                            <option value="S0">S0</option>
+                            <option value="REJ">REJ</option>
+                            <option value="RSTR">RSTR</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>src_bytes</label>
+                        <input type="number" name="src_bytes" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>dst_bytes</label>
+                        <input type="number" name="dst_bytes" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>wrong_fragment</label>
+                        <input type="number" name="wrong_fragment" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>urgent</label>
+                        <input type="number" name="urgent" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>hot</label>
+                        <input type="number" name="hot" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>num_failed_logins</label>
+                        <input type="number" name="num_failed_logins" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>logged_in</label>
+                        <select name="logged_in">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>num_compromised</label>
+                        <input type="number" name="num_compromised" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>root_shell</label>
+                        <select name="root_shell">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>su_attempted</label>
+                        <select name="su_attempted">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>count</label>
+                        <input type="number" name="count" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>srv_count</label>
+                        <input type="number" name="srv_count" value="0">
+                    </div>
+                </div>
+                <button type="submit">🚨 Analyze Traffic</button>
+            </form>
+        </div>
+
+        <div id="resultArea" style="display: none;"></div>
+    </div>
+
+    <footer>
+        <p>Glorious Vision University | ML-based NIDS | 2025</p>
+    </footer>
+
+    <script>
+        const form = document.getElementById('detectForm');
+        const resultArea = document.getElementById('resultArea');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            // Convert numeric strings to numbers
+            for (let [key, val] of Object.entries(data)) {
+                if (!isNaN(val) && val !== '') data[key] = Number(val);
+            }
+
+            resultArea.style.display = 'block';
+            resultArea.innerHTML = '<div class="card"><p style="text-align:center">⏳ Analyzing connection...</p></div>';
+
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    let borderClass = `result-${result.class.toLowerCase()}`;
+                    let severityColor = result.severity === 'Low' ? '#00ff88' : (result.severity === 'High' ? '#ff4444' : '#ffaa44');
+                    let probHtml = '';
+                    for (let [cls, prob] of Object.entries(result.probabilities)) {
+                        probHtml += `
+                            <div>
+                                <span style="font-size:0.8rem;">${cls}</span>
+                                <div class="prob-bar">
+                                    <div class="prob-fill" style="width: ${prob}%; background: ${cls === result.class ? '#00ff88' : '#3a3a5e'}">${prob}%</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    resultArea.innerHTML = `
+                        <div class="card result-card ${borderClass}">
+                            <h3>🔔 Detection Result</h3>
+                            <p><strong>Classification:</strong> <span style="color: ${severityColor}; font-weight:bold;">${result.class}</span></p>
+                            <p><strong>Severity:</strong> <span style="color: ${severityColor}">${result.severity}</span></p>
+                            <p><strong>Confidence:</strong> ${result.confidence}%</p>
+                            <hr style="margin: 15px 0; border-color:#333;">
+                            <h4>Class Probabilities</h4>
+                            ${probHtml}
+                            <button onclick="resetForm()" style="margin-top:20px; background:#333;">⟳ New Analysis</button>
+                        </div>
+                    `;
+                } else {
+                    resultArea.innerHTML = `<div class="card"><p style="color:#ff6666">Error: ${result.error}</p></div>`;
+                }
+            } catch (err) {
+                resultArea.innerHTML = `<div class="card"><p style="color:#ff6666">Network error: ${err.message}</p></div>`;
+            }
+        });
+
+        function resetForm() {
+            form.reset();
+            resultArea.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
